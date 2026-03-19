@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,13 +13,7 @@ import {
   Settings2,
   CheckCircle2,
   AlertCircle,
-  Trash2,
 } from "lucide-react";
-
-type WeeklySettingRow = {
-  week_start_date: string;
-  lesson_days: number[];
-};
 
 type LessonSlotRow = {
   id: string;
