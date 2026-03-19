@@ -266,11 +266,8 @@ export default function MemberPage() {
               <div>
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <CalendarDays className="h-5 w-5" />
-                  이번 주 레슨 시간표
+                  주간 레슨 신청
                 </CardTitle>
-                <p className="mt-2 text-sm text-slate-600">
-                  운영자가 설정한 이번 주 레슨 시간만 표시됩니다.
-                </p>
               </div>
             </div>
           </CardHeader>
