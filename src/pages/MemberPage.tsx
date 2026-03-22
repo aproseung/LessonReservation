@@ -294,7 +294,7 @@ export default function MemberPage() {
                 {groupedDays.map((day) => (
                   <Card key={day.dateKey} className="rounded-3xl border-slate-200 shadow-none">
                     <CardHeader className="pb-3">
-                      <CardTitle className="text-lg">{day.label}</CardTitle>
+                      <CardTitle className="text-xl font-bold">{day.label}</CardTitle>
                     </CardHeader>
 
                     <CardContent className="space-y-3">
@@ -319,12 +319,12 @@ export default function MemberPage() {
                           >
                             <div className="flex items-center justify-between gap-3">
                               <div>
-                                <div className="flex items-center gap-2 text-base font-semibold">
+                                <div className="flex items-center gap-2 text-xl font-semibold">
                                   <Clock3 className="h-4 w-4" />
                                   {slot.startTime} ~ {slot.endTime}
                                 </div>
 
-                                <div className="mt-2 text-lg font-bold leading-6 text-slate-600">
+                                <div className="mt-2 text-xl font-semibold leading-6 text-slate-600">
                                   {state === "open" && "예약 가능"}
                                   {state === "reserved" && (
                                     <span>{reservation?.member_name}</span>
