@@ -53,11 +53,19 @@ const WEEKDAY_KR = ["일", "월", "화", "수", "목", "금", "토"];
 
 function getMonday(date: Date = new Date()): Date {
   const d = new Date(date);
-  const day = d.getDay();
-  const diff = day === 0 ? -6 : 1 - day;
-  d.setDate(d.getDate() + diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
+  const sunday14 = new Date(d);
+  sunday14.setDate(sunday14.getDate() - sunday14.getDay());
+  sunday14.setHours(14, 0, 0, 0);
+
+  if (d < sunday14) {
+    sunday14.setDate(sunday14.getDate() - 7);
+  }
+
+  const monday = new Date(sunday14);
+  monday.setDate(monday.getDate() + 1);
+  monday.setHours(0, 0, 0, 0);
+
+  return monday;
 }
 
 function dateKey(date: Date): string {
