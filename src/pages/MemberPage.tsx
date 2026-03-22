@@ -270,10 +270,10 @@ export default function MemberPage() {
       <div className="mx-auto max-w-5xl space-y-4">
         <Card className="rounded-3xl border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex justify-center items-center justify-between gap-3">
               <div>
                 <CardTitle className="flex items-center gap-2 text-xl">
-                  <CalendarDays className="h-5 w-5" />
+                  <CalendarDays className="h-5 w-5 font-bold" />
                   주간 레슨 신청
                 </CardTitle>
               </div>
@@ -281,11 +281,6 @@ export default function MemberPage() {
           </CardHeader>
 
           <CardContent className="space-y-5">
-            <Alert className="rounded-2xl border-slate-200 bg-slate-50">
-              <AlertDescription className="text-base leading-7">
-                원하시는 시간을 눌러서 신청해 주세요.
-              </AlertDescription>
-            </Alert>
 
             {loading ? (
               <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
@@ -310,9 +305,9 @@ export default function MemberPage() {
 
                         const stateStyle =
                           state === "open"
-                            ? "bg-white hover:bg-slate-50 border-slate-300"
+                            ? "bg-green-200 hover:bg-green-300 border-slate-300"
                             : state === "reserved"
-                            ? "bg-slate-100 border-slate-200 text-slate-600"
+                            ? "bg-red-200 border-slate-200 text-slate-600"
                             : "bg-slate-100 border-slate-200 text-slate-400";
 
                         return (
@@ -330,16 +325,16 @@ export default function MemberPage() {
                                   {slot.startTime} ~ {slot.endTime}
                                 </div>
 
-                                <div className="mt-2 text-sm leading-6 text-slate-600">
+                                <div className="mt-2 text-lg font-bold leading-6 text-slate-600">
                                   {state === "open" && "예약 가능"}
                                   {state === "reserved" && (
-                                    <span>마감 · {reservation?.member_name}</span>
+                                    <span>{reservation?.member_name}</span>
                                   )}
                                   {state === "blocked" && "예약 불가"}
                                 </div>
                               </div>
 
-                              <div>
+                              {/* <div>
                                 {state === "open" && <Badge className="rounded-xl">가능</Badge>}
                                 {state === "reserved" && (
                                   <Badge variant="secondary" className="rounded-xl">
@@ -351,7 +346,7 @@ export default function MemberPage() {
                                     불가
                                   </Badge>
                                 )}
-                              </div>
+                              </div> */}
                             </div>
                           </button>
                         );
