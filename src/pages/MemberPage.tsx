@@ -146,10 +146,18 @@ export default function MemberPage() {
     return map;
   }, [reservations]);
 
-  const memberHasReservationThisWeek = (memberName: string): boolean => {
-    return reservations.some(
-      (r) => r.week_start_date === currentWeekKey && r.member_name.trim() === memberName.trim()
-    );
+  const memberHasWeekdayReservationThisWeek = (memberName: string): boolean => {
+    return reservations.some((r) => {
+      if (r.week_start_date !== currentWeekKey) return false;
+      if (r.member_name.trim() !== memberName.trim()) return false;
+
+      const reservedSlot = slots.find((slot) => slot.id === r.slot_id);
+      if (!reservedSlot) return false;
+
+      const day = new Date(reservedSlot.slot_date).getDay();
+
+      return day !== 0 && day !== 6;
+    });
   };
 
   const getSlotState = (slot: SlotView): SlotState => {
@@ -233,10 +241,13 @@ export default function MemberPage() {
       return;
     }
 
-    if (memberHasReservationThisWeek(trimmed)) {
+    const selectedDay = new Date(selectedSlot.slotDate).getDay();
+    const isSelectedWeekend = selectedDay === 0 || selectedDay === 6;
+
+    if (isSelectedWeekend && memberHasWeekdayReservationThisWeek(trimmed)) {
       setMessage({
         type: "error",
-        text: "이번 주는 이미 예약하셨습니다. 1인당 주 1회만 신청 가능합니다.",
+        text: "주중 레슨은 한 주에 한 번만 신청 가능합니다. 주말 레슨은 추가 신청 가능합니다.",
       });
       return;
     }
