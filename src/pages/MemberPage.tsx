@@ -244,7 +244,7 @@ export default function MemberPage() {
     const selectedDay = new Date(selectedSlot.slotDate).getDay();
     const isSelectedWeekend = selectedDay === 0 || selectedDay === 6;
 
-    if (isSelectedWeekend && memberHasWeekdayReservationThisWeek(trimmed)) {
+    if (!isSelectedWeekend && memberHasWeekdayReservationThisWeek(trimmed)) {
       setMessage({
         type: "error",
         text: "주중 레슨은 한 주에 한 번만 신청 가능합니다. 주말 레슨은 추가 신청 가능합니다.",
@@ -265,7 +265,7 @@ export default function MemberPage() {
       setSubmitting(false);
       setMessage({
         type: "error",
-        text: "이미 예약되었거나 이번 주에 이미 신청한 이름입니다.",
+        text: "이미 예약된 시간입니다. 다시 시도해 주세요.",
       });
       return;
     }
