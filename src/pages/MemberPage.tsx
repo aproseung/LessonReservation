@@ -308,6 +308,13 @@ export default function MemberPage() {
                       <CardTitle className="text-xl font-bold">{day.label}</CardTitle>
                     </CardHeader>
 
+                    {(new Date(day.dateKey).getDay() === 0 ||
+                      new Date(day.dateKey).getDay() === 6) && (
+                      <div className="px-4 pb-2 text-sm font-bold text-blue-600">
+                        주말은 2인 이상 신청시 진행
+                      </div>
+                    )}
+
                     <CardContent className="space-y-3">
                       {day.slots.map((slot) => {
                         const state = getSlotState(slot);
@@ -325,7 +332,7 @@ export default function MemberPage() {
                             key={slot.id}
                             type="button"
                             onClick={() => openBookingDialog(slot)}
-                            className={`w-full rounded-2xl border p-4 text-left transition ${stateStyle}`}
+                            className={`w-full rounded-xl border px-4 py-3 text-left transition ${stateStyle}`}
                             disabled={state !== "open"}
                           >
                             <div className="flex items-center justify-between gap-3">
