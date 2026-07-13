@@ -146,17 +146,28 @@ export default function MemberPage() {
     return map;
   }, [reservations]);
 
-  const memberHasWeekdayReservationThisWeek = (memberName: string): boolean => {
-    return reservations.some((r) => {
-      if (r.week_start_date !== currentWeekKey) return false;
-      if (r.member_name.trim() !== memberName.trim()) return false;
+  const memberHasWeekdayReservationThisWeek = (
+    memberName: string,
+    selectedDay: number
+  ): boolean => {
+    const normalizedName = memberName.trim();
 
-      const reservedSlot = slots.find((slot) => slot.id === r.slot_id);
-      if (!reservedSlot) return false;
+    return groupedDays.some((day) => {
+      const dayOfWeek = new Date(`${day.dateKey}T00:00:00`).getDay();
 
-      const day = new Date(reservedSlot.slot_date).getDay();
+      // 주중 예약이면 주중끼리 검사
+      const isSameReservationGroup =
+        selectedDay === 6
+          ? dayOfWeek === 6
+          : dayOfWeek >= 1 && dayOfWeek <= 5;
 
-      return day !== 0 && day !== 6;
+      if (!isSameReservationGroup) return false;
+
+      return day.slots.some((slot) => {
+        const reservation = reservationsBySlot.get(slot.id);
+
+        return reservation?.member_name.trim() === normalizedName;
+      });
     });
   };
 
@@ -244,10 +255,16 @@ export default function MemberPage() {
     const selectedDay = new Date(selectedSlot.slotDate).getDay();
     const isSelectedWeekend = selectedDay === 0 || selectedDay === 6;
 
-    if (!isSelectedWeekend && memberHasWeekdayReservationThisWeek(trimmed)) {
+    if (
+      (!isSelectedWeekend || selectedDay === 6) &&
+      memberHasWeekdayReservationThisWeek(trimmed, selectedDay)
+    ) {
       setMessage({
         type: "error",
-        text: "주중 레슨은 한 주에 한 번만 신청 가능합니다. 주말 레슨은 추가 신청 가능합니다.",
+        text:
+          selectedDay === 6
+            ? "토요일 레슨은 한 번만 신청 가능합니다."
+            : "주중 레슨은 한 주에 한 번만 신청 가능합니다. 주말 레슨은 추가 신청 가능합니다.",
       });
       return;
     }
