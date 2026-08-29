@@ -146,26 +146,39 @@ export default function MemberPage() {
     return map;
   }, [reservations]);
 
-  const memberHasWeekdayReservationThisWeek = (
-    memberName: string,
-    selectedDay: number
+  const getMemberWeekdayReservationsThisWeek = (
+    memberName: string
+  ): SlotView[] => {
+    const normalizedName = memberName.trim();
+  
+    return groupedDays.flatMap((day) => {
+      const dayOfWeek = new Date(`${day.dateKey}T00:00:00`).getDay();
+  
+      // 월~금만 검사
+      if (dayOfWeek < 1 || dayOfWeek > 5) return [];
+  
+      return day.slots.filter((slot) => {
+        const reservation = reservationsBySlot.get(slot.id);
+  
+        return reservation?.member_name.trim() === normalizedName;
+      });
+    });
+  };
+  
+  // 기존 토요일 예약 제한은 그대로 유지
+  const memberHasSaturdayReservationThisWeek = (
+    memberName: string
   ): boolean => {
     const normalizedName = memberName.trim();
-
+  
     return groupedDays.some((day) => {
       const dayOfWeek = new Date(`${day.dateKey}T00:00:00`).getDay();
-
-      // 주중 예약이면 주중끼리 검사
-      const isSameReservationGroup =
-        selectedDay === 6
-          ? dayOfWeek === 6
-          : dayOfWeek >= 1 && dayOfWeek <= 5;
-
-      if (!isSameReservationGroup) return false;
-
+  
+      if (dayOfWeek !== 6) return false;
+  
       return day.slots.some((slot) => {
         const reservation = reservationsBySlot.get(slot.id);
-
+  
         return reservation?.member_name.trim() === normalizedName;
       });
     });
@@ -252,19 +265,44 @@ export default function MemberPage() {
       return;
     }
 
-    const selectedDay = new Date(selectedSlot.slotDate).getDay();
-    const isSelectedWeekend = selectedDay === 0 || selectedDay === 6;
-
+    const selectedDay = new Date(`${selectedSlot.slotDate}T00:00:00`).getDay();
+    
+    // 월~금
+    if (selectedDay >= 1 && selectedDay <= 5) {
+      const weekdayReservations =
+        getMemberWeekdayReservationsThisWeek(trimmed);
+    
+      // 같은 날짜에 이미 예약이 있는지 확인
+      const hasReservationOnSameDay = weekdayReservations.some(
+        (slot) => slot.slotDate === selectedSlot.slotDate
+      );
+    
+      if (hasReservationOnSameDay) {
+        setMessage({
+          type: "error",
+          text: "주중 레슨은 하루에 한 번만 신청 가능합니다.",
+        });
+        return;
+      }
+    
+      // 주중 전체 예약 최대 2회
+      if (weekdayReservations.length >= 2) {
+        setMessage({
+          type: "error",
+          text: "주중 레슨은 한 주에 최대 두 번까지 신청 가능합니다.",
+        });
+        return;
+      }
+    }
+    
+    // 토요일 기존 제한 유지
     if (
-      (!isSelectedWeekend || selectedDay === 6) &&
-      memberHasWeekdayReservationThisWeek(trimmed, selectedDay)
+      selectedDay === 6 &&
+      memberHasSaturdayReservationThisWeek(trimmed)
     ) {
       setMessage({
         type: "error",
-        text:
-          selectedDay === 6
-            ? "토요일 레슨은 한 번만 신청 가능합니다."
-            : "주중 레슨은 한 주에 한 번만 신청 가능합니다. 주말 레슨은 추가 신청 가능합니다.",
+        text: "토요일 레슨은 한 번만 신청 가능합니다.",
       });
       return;
     }
