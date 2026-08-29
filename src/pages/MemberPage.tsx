@@ -50,18 +50,38 @@ type SlotState = "open" | "reserved" | "blocked";
 
 const WEEKDAY_KR = ["일", "월", "화", "수", "목", "금", "토"];
 
+// function getMonday(date: Date = new Date()): Date {
+//   const d = new Date(date);
+//   const sunday14 = new Date(d);
+//   sunday14.setDate(sunday14.getDate() - sunday14.getDay());
+//   sunday14.setHours(14, 0, 0, 0);
+
+//   if (d < sunday14) {
+//     sunday14.setDate(sunday14.getDate() - 7);
+//   }
+
+//   const monday = new Date(sunday14);
+//   monday.setDate(monday.getDate() + 1);
+//   monday.setHours(0, 0, 0, 0);
+
+//   return monday;
+// }
+
 function getMonday(date: Date = new Date()): Date {
   const d = new Date(date);
-  const sunday14 = new Date(d);
-  sunday14.setDate(sunday14.getDate() - sunday14.getDay());
-  sunday14.setHours(14, 0, 0, 0);
 
-  if (d < sunday14) {
-    sunday14.setDate(sunday14.getDate() - 7);
+  const saturday15 = new Date(d);
+  saturday15.setDate(
+    saturday15.getDate() - ((saturday15.getDay() + 1) % 7)
+  );
+  saturday15.setHours(15, 0, 0, 0);
+
+  if (d < saturday15) {
+    saturday15.setDate(saturday15.getDate() - 7);
   }
 
-  const monday = new Date(sunday14);
-  monday.setDate(monday.getDate() + 1);
+  const monday = new Date(saturday15);
+  monday.setDate(monday.getDate() + 2);
   monday.setHours(0, 0, 0, 0);
 
   return monday;
